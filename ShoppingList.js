@@ -1,3 +1,7 @@
+// In this code, the global list is modified directly for efficiency,
+// Not using a returned copy to avoid extra memory.
+
+// Global list variable declared
 let shoppingList = []
 
 // Use of a constructor instead of a simple object {} so we can easily create multiple reusable entries.
@@ -24,25 +28,25 @@ addItem("manzanas", 4);
 addItem("plátanos", 6);
 addItem("yogur", 5);
 
-console.log("shoppingList after adding items")
+console.log("shoppingList after adding different items starting from an empty list")
 console.log(shoppingList)
 
 // Function that removes an element from the shoppingList
-function removeItem(index, shoppingList){
+function removeItem(index){
   return shoppingList.splice(index, 1)
 }
 
 // A couple of examples showing how the elements are removed
 removeItem(1, shoppingList)
-console.log("\nshoppingList after removing items I")
+console.log("\nshoppingList after removing an item")
 console.log(shoppingList)
 
 removeItem(6, shoppingList)
-console.log("\nshoppingList after removing items II")
+console.log("\nshoppingList after removing another item")
 console.log(shoppingList)
 
 // Function that updates the shoppingList according to the arguments passed 
-function updateItem(index, newItem, newQuantity, purchased, shoppingList){
+function updateItem(index, newItem, newQuantity, purchased){
   let itemList = []
   for (let v of shoppingList){
     itemList.push(v["item"])
@@ -61,8 +65,10 @@ function updateItem(index, newItem, newQuantity, purchased, shoppingList){
 } 
 
 // A couple of examples showing how the shoppingList is updated
-updateItem(1,"galletas",10, true, shoppingList)
-updateItem(3,"doritos", 8, true, shoppingList)
+updateItem(1,"galletas",10, true)
+console.log("\n shoppingList after an update")
+console.log(shoppingList)
 
-console.log("\n shoppingList after a couple of updates")
+updateItem(3,"doritos", 8, true)
+console.log("\n shoppingList after another update")
 console.log(shoppingList)
