@@ -1,5 +1,6 @@
 let shoppingList = []
 
+// Use of a constructor instead of a simple object {} so we can easily create multiple reusable entries.
 function Entry(item, quantity, purchased) {
     this.item = item;
     this.quantity = quantity;
@@ -28,14 +29,16 @@ console.log(shoppingList)
 
 // Function that removes an element from the shoppingList
 function removeItem(index, shoppingList){
-  return shoppingList.splice(5, 1)
+  return shoppingList.splice(index, 1)
 }
 
 // A couple of examples showing how the elements are removed
 removeItem(1, shoppingList)
-removeItem(6, shoppingList)
+console.log("\nshoppingList after removing items I")
+console.log(shoppingList)
 
-console.log("\nshoppingList after removing items")
+removeItem(6, shoppingList)
+console.log("\nshoppingList after removing items II")
 console.log(shoppingList)
 
 // Function that updates the shoppingList according to the arguments passed 
