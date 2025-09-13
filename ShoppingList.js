@@ -12,11 +12,16 @@ console.log(nuevo)
 
 // Funcion para agregar una entrada a la lista
 
-function addItem(lista_compra, para_agregar){
-  lista_compra.push(para_agregar)
+function addItem(item, cantidad){
+
+  lista_compra.push(new entrada(item, cantidad, false)) 
+    
 }
 
-addItem(lista_compra, new entrada("bolsa de patatas lays", 2, false))
-addItem(lista_compra, new entrada("bolsa de cacauetes", 1, false))
+addItem("bolsa de patatas lays", 2)
+addItem("bolsa de cacauetes", 1)
+
+
 
 console.log(lista_compra)
+
