@@ -6,12 +6,12 @@ function Entry(item, quantity, purchased) {
     this.purchased = purchased;
 }
 
-// Funcion para agregar una Entry a la lista
+// Function that adds an entry to the shoppingList
 function addItem(item, quantity){
   shoppingList.push(new Entry(item, quantity, false)) 
 }
 
-// Ejemplos de añadir
+// A few examples of how the items are added in the shopping list
 addItem("bolsa de patatas lays", 2)
 addItem("bolsa de cacauetes", 1)
 addItem("galletas", 3);
@@ -23,19 +23,22 @@ addItem("manzanas", 4);
 addItem("plátanos", 6);
 addItem("yogur", 5);
 
+console.log("shoppingList after adding items")
 console.log(shoppingList)
 
-// Funcion para eliminar un elemento de la lista usando un indice como argumento
+// Function that removes an element from the shoppingList
 function removeItem(index, shoppingList){
   return shoppingList.splice(5, 1)
 }
 
+// A couple of examples showing how the elements are removed
 removeItem(1, shoppingList)
 removeItem(6, shoppingList)
 
-console.log(12)
+console.log("\nshoppingList after removing items")
+console.log(shoppingList)
 
-// Funcion para actualiza de la lista usando como argumento el indice, el item nuevo y la quantity
+// Function that updates the shoppingList according to the arguments passed 
 function updateItem(index, newItem, newQuantity, purchased, shoppingList){
   let itemList = []
   for (let v of shoppingList){
@@ -54,7 +57,9 @@ function updateItem(index, newItem, newQuantity, purchased, shoppingList){
   }
 } 
 
+// A couple of examples showing how the shoppingList is updated
 updateItem(1,"galletas",10, true, shoppingList)
 updateItem(3,"doritos", 8, true, shoppingList)
 
+console.log("\n shoppingList after a couple of updates")
 console.log(shoppingList)
