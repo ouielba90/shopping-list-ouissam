@@ -1,5 +1,6 @@
 // In this code, the global list is modified directly for efficiency,
 // Not using a returned copy to avoid extra memory.
+// Input validations are already implemented.
 
 // Global list variable declared
 let shoppingList = []
@@ -39,11 +40,11 @@ addItem("plátanos", 6);
 addItem("yogur", 5);
 
 console.log("shoppingList after adding different items starting from an empty list")
-console.log(shoppingList)
+console.table(shoppingList)
 
 // Function that removes an element from the shoppingList
 function removeItem(index){
-  if (index > -shoppingList.length && index <= shoppingList.length && Number.isInteger(index)){
+  if (Math.abs(index) <= shoppingList.length && Number.isInteger(index)){
     shoppingList.splice(index, 1)
   } else {
     console.warn("The index passed is out of the range of the list")
@@ -51,13 +52,13 @@ function removeItem(index){
 }
 
 // A couple of examples showing how the elements are removed
-removeItem(1, shoppingList)
+removeItem(1)
 console.log("\nshoppingList after removing an item")
-console.log(shoppingList)
+console.table(shoppingList)
 
-removeItem(6, shoppingList)
+removeItem(6)
 console.log("\nshoppingList after removing another item")
-console.log(shoppingList)
+console.table(shoppingList)
 
 // Function that updates the shoppingList according to the arguments passed 
 function updateItem(index, newItem, newQuantity, purchased){
@@ -66,7 +67,7 @@ function updateItem(index, newItem, newQuantity, purchased){
     itemList.push(v["item"])
   }
   let quick_validation = false 
-  if (Number.isInteger(index) && index > -shoppingList.length && index >= shoppingList.index && Number.isInteger(newQuantity) && typeof purchased === "boolean"){
+  if (Number.isInteger(newQuantity) && typeof purchased === "boolean"){
     quick_validation = true
   }
 
@@ -76,9 +77,10 @@ function updateItem(index, newItem, newQuantity, purchased){
       if(shoppingList[currentItemIndex]["quantity"] !== newQuantity){
         shoppingList[currentItemIndex]["quantity"] = newQuantity
         shoppingList[currentItemIndex]["purchased"] = purchased
-        console.log("Entry updated")
+        console.log("Entry updated (index ignored because the entry exists already)")
     }
-  } else if (currentItem === undefined && quick_validation) {
+  } else if (currentItem === undefined && quick_validation && Number.isInteger(index)) {
+      if (Math.abs(index) > shoppingList.length) {console.log("The index introduced is out of range. The entry will be added at the of the list")}
       shoppingList.splice(index, 0, new Entry(newItem, newQuantity, purchased))
       console.log("New entry added because it did not exist earlier")
   } else {
@@ -87,45 +89,13 @@ function updateItem(index, newItem, newQuantity, purchased){
 } 
 
 // A couple of examples showing how the shoppingList is updated
-updateItem(1,"galletas", 10, true)
+updateItem(10, "galletas", 10, true)
 console.log("\n shoppingList after an update")
-console.log(shoppingList)
+console.table(shoppingList)
 
-updateItem(3,"doritos", 8, true)
+updateItem(12, "doritos", 8, true)
 console.log("\n shoppingList after another update")
-console.log(shoppingList)
+console.table(shoppingList)
 
 
-// Optional tasks
-
-// Validations while adding items
-console.warn("Case 1 where the quantity is negative")
-addItem("lentejas", -4)
-
-console.warn("Case 2 where the quantity is something that is not an integer")
-addItem("lentejas", "/4")
-
-console.warn("Case 3 where we try to add an item that already exists")
-addItem("leche", 4)
-
-console.log(shoppingList)
-
-// Validations while removing items
-console.log("Case 1 where the index passed is out of range")
-removeItem(12)
-
-console.log("Case 2 where the index passed is not an integer")
-removeItem("r")
-
-console.log(shoppingList)
-
-// Validations while updating items
-
-console.log("Case 1 where one of the parameters is not allowed")
-updateItem(1,"galletas", -10, true)
-
-console.log("Case 1 where one of the parameters is not allowed")
-updateItem(12,"galletas", 10, false)
-
-console.log(shoppingList)
 
