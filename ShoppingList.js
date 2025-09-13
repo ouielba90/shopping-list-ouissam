@@ -1,21 +1,17 @@
-let lista_compra = []
+let shoppingList = []
 
-function entrada(item, cantidad, comprado) {
+function Entry(item, quantity, purchased) {
     this.item = item;
-    this.cantidad = cantidad;
-    this.comprado = comprado;
+    this.quantity = quantity;
+    this.purchased = purchased;
 }
 
-let nuevo = new entrada("patatas",2,true)
-
-console.log(nuevo)
-
-// Funcion para agregar una entrada a la lista
-
-function addItem(item, cantidad){
-  lista_compra.push(new entrada(item, cantidad, false)) 
+// Funcion para agregar una Entry a la lista
+function addItem(item, quantity){
+  shoppingList.push(new Entry(item, quantity, false)) 
 }
 
+// Ejemplos de añadir
 addItem("bolsa de patatas lays", 2)
 addItem("bolsa de cacauetes", 1)
 addItem("galletas", 3);
@@ -27,38 +23,38 @@ addItem("manzanas", 4);
 addItem("plátanos", 6);
 addItem("yogur", 5);
 
-console.log(lista_compra)
+console.log(shoppingList)
 
 // Funcion para eliminar un elemento de la lista usando un indice como argumento
-
-function removeItem(index, lista_compra){
-  return lista_compra.splice(5, 1)
+function removeItem(index, shoppingList){
+  return shoppingList.splice(5, 1)
 }
 
-removeItem(1,lista_compra)
+removeItem(1, shoppingList)
+removeItem(6, shoppingList)
 
 console.log(12)
 
-// Funcion para actualiza de la lista usando como argumento el indice, el item nuevo y la cantidad
-function updateItem(index, newItem, newQuantity, comprado, lista_compra){
-  let lista_items = []
-  for (let v of lista_compra){
-    lista_items.push(v["item"])
+// Funcion para actualiza de la lista usando como argumento el indice, el item nuevo y la quantity
+function updateItem(index, newItem, newQuantity, purchased, shoppingList){
+  let itemList = []
+  for (let v of shoppingList){
+    itemList.push(v["item"])
   }
   
-  let elemento_actual = lista_compra.find(el => el["item"] === newItem);
-  if (elemento_actual !== undefined){
-    let elemento_actual_index = lista_compra.findIndex(el => el["item"] === newItem);
-      if(lista_compra[elemento_actual_index]["cantidad"] !== newQuantity){
-        lista_compra[elemento_actual_index]["cantidad"] = newQuantity
-        lista_compra[elemento_actual_index]["comprado"] = comprado
+  let currentItem = shoppingList.find(el => el["item"] === newItem);
+  if (currentItem !== undefined){
+    let currentItemIndex = shoppingList.findIndex(el => el["item"] === newItem);
+      if(shoppingList[currentItemIndex]["quantity"] !== newQuantity){
+        shoppingList[currentItemIndex]["quantity"] = newQuantity
+        shoppingList[currentItemIndex]["purchased"] = purchased
     }
   } else {
-      lista_compra.splice(index, 0, new entrada(newItem, newQuantity, comprado))
+      shoppingList.splice(index, 0, new Entry(newItem, newQuantity, purchased))
   }
 } 
 
+updateItem(1,"galletas",10, true, shoppingList)
+updateItem(3,"doritos", 8, true, shoppingList)
 
-updateItem(1,"galletas",10, true, lista_compra)
-updateItem(3,"doritos", 8, true, lista_compra)
-console.log(lista_compra)
+console.log(shoppingList)
