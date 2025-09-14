@@ -3,7 +3,7 @@
 // Input validations are already implemented.
 
 // Global list variable declared
-let shoppingList = []
+let shoppingList = [];
 
 // Use of a constructor instead of a simple object {} so we can easily create multiple reusable entries.
 function Entry(item, quantity, purchased) {
@@ -13,89 +13,127 @@ function Entry(item, quantity, purchased) {
 }
 
 // Function that adds an entry to the shoppingList
-function addItem(item, quantity){
+function addItem(list, item, quantity){
   let currentItem_validation = shoppingList.find(el => el["item"] === item);
   if (currentItem_validation === undefined){
     if (quantity < 0 | !Number.isInteger(quantity)) {
       quantity = 0
-      console.warn("Negative number or unaccepted input for quantity detected.")
-      console.warn("Item is still created setting quantity = 0")
+      console.warn("\nNegative number or unaccepted input for quantity detected.");
+      console.warn("Item is still created setting quantity = 0");
     }
-    shoppingList.push(new Entry(item, quantity, false)) 
+    list.push(new Entry(item, quantity, false));
+    console.log("\nItem created");
   } else {
-    console.warn("Duplication found! The item won't be created.")
+    console.warn("\nDuplication found! The item won't be created.");
   }
+  return list;
+}
+
+// Function that removes an element from the shoppingList
+function removeItem(list, index){
+  if (Math.abs(index) <= shoppingList.length && Number.isInteger(index)){
+    list.splice(index, 1);
+    console.log("\nItem removed");
+  } else {
+    console.warn("\nThe index passed is out of the range of the list.");
+  }
+  return list
+}
+
+// Function that updates the shoppingList according to the arguments passed 
+function updateItem(list, index, newItem, newQuantity){
+  let quick_validation = false;
+
+  if (Number.isInteger(newQuantity)) {
+    quick_validation = true;
+  }
+
+  let currentItemIndex = shoppingList.findIndex(el => el["item"] === newItem);
+  if (currentItemIndex === index && quick_validation) {
+    shoppingList[currentItemIndex]["quantity"] = newQuantity;
+    console.log("\nEntry updated");
+    
+  } else if (currentItemIndex !== index && quick_validation) {
+      console.log("\nThe item property cannot be updated. Item not found in the ", index, " index.");
+
+  } else {
+      console.warn("\nThere was an error in one or more parameters");
+  }
+  return list;
 }
 
 // A few examples of how the items are added in the shopping list
-addItem("bolsa de patatas lays", 2)
-addItem("bolsa de cacauetes", 1)
-addItem("galletas", 3);
-addItem("zumo de naranja", 2);
-addItem("pan", 1);
-addItem("leche", 2);
-addItem("huevos", 12);
-addItem("manzanas", 4);
-addItem("plátanos", 6);
-addItem("yogur", 5);
+shoppingList = addItem(shoppingList, "bolsa de patatas lays", 2);
+shoppingList = addItem(shoppingList, "bolsa de cacauetes", 1);
+shoppingList = addItem(shoppingList, "galletas", 3);
+shoppingList = addItem(shoppingList, "zumo de naranja", 2);
+shoppingList = addItem(shoppingList, "pan", 1);
+shoppingList = addItem(shoppingList, "leche", 2);
+shoppingList = addItem(shoppingList, "huevos", 12);
+shoppingList = addItem(shoppingList, "manzanas", 4);
+shoppingList = addItem(shoppingList, "plátanos", 6);
+shoppingList = addItem(shoppingList, "yogur", 5);
 
-console.log("shoppingList after adding different items starting from an empty list")
 console.table(shoppingList)
 
-// Function that removes an element from the shoppingList
-function removeItem(index){
-  if (Math.abs(index) <= shoppingList.length && Number.isInteger(index)){
-    shoppingList.splice(index, 1)
-  } else {
-    console.warn("The index passed is out of the range of the list")
-  }
+// Prompt
+try { // Just checks whether the prompt-sync module is installed
+    prompt = require('prompt-sync')();
+} catch (err) {
+    console.log('Module not installed');
+    console.log('Run: npm install prompt-sync');
+    process.exit();
 }
 
-// A couple of examples showing how the elements are removed
-removeItem(1)
-console.log("\nshoppingList after removing an item")
-console.table(shoppingList)
+let options = ["1", "2", "3", "q"];
+let choose_option = "";
+let input_add = ""
 
-removeItem(6)
-console.log("\nshoppingList after removing another item")
-console.table(shoppingList)
+console.log("Customize Your Shopping List");
 
-// Function that updates the shoppingList according to the arguments passed 
-function updateItem(index, newItem, newQuantity, purchased){
-  let itemList = []
-  for (let v of shoppingList){
-    itemList.push(v["item"])
+while (choose_option !== "q") {
+  console.log("Options available: [1] Add element, [2] Remove Element, [3] Update item, [q] Quit");
+  choose_option = prompt("Choose the task? ");
+  switch (choose_option) {
+    case "1":
+      console.log("Add");
+      input_add = prompt("Enter an item and quantity as 'item,quantity' (string,integer): ");
+      if (input_add.split(",").length === 2) { // It validates if the input introduced has two elements
+        shoppingList = addItem(shoppingList, input_add.split(",")[0], Number(input_add.split(",")[1]));
+        console.table(shoppingList);
+        console.log("");
+      } else {
+        console.log("Wrong input...");
+      }
+      break;
+
+    case "2":
+      console.log("Remove");
+      input_add = prompt("Enter the index number of the item you want to delete (integer): ");
+      shoppingList = removeItem(shoppingList, Number(input_add));
+      console.table(shoppingList);
+      console.log("");
+      break;
+
+    case "3":
+      console.log("Update");
+      console.log("Enter the index number, item and quantity as");
+      input_add = prompt("'index,item,quantity'(integer,string,integer): ");
+      if (input_add.split(",").length === 3) { // It validates if the input introduced has three elements
+        shoppingList = updateItem(shoppingList, Number(input_add.split(",")[0]), input_add.split(",")[1], Number(input_add.split(",")[2]));
+        console.table(shoppingList);
+        console.log("");
+      } else {
+        console.log("Wrong input...");
+      }
+      break;
+
+    case "q":
+      console.log("Goodbye! See you next time!");
+      break;
+
+    default:
+      console.log("Unrecognized option. Try again!\n");
+      break;
   }
-  let quick_validation = false 
-  if (Number.isInteger(newQuantity) && typeof purchased === "boolean"){
-    quick_validation = true
-  }
-
-  let currentItem = shoppingList.find(el => el["item"] === newItem);
-  if (currentItem !== undefined && quick_validation){
-    let currentItemIndex = shoppingList.findIndex(el => el["item"] === newItem);
-      if(shoppingList[currentItemIndex]["quantity"] !== newQuantity){
-        shoppingList[currentItemIndex]["quantity"] = newQuantity
-        shoppingList[currentItemIndex]["purchased"] = purchased
-        console.log("Entry updated (index ignored because the entry exists already)")
-    }
-  } else if (currentItem === undefined && quick_validation && Number.isInteger(index)) {
-      if (Math.abs(index) > shoppingList.length) {console.log("The index introduced is out of range. The entry will be added at the of the list")}
-      shoppingList.splice(index, 0, new Entry(newItem, newQuantity, purchased))
-      console.log("New entry added because it did not exist earlier")
-  } else {
-      console.warn("There was an error in one or more parameters")
-  }
-} 
-
-// A couple of examples showing how the shoppingList is updated
-updateItem(10, "galletas", 10, true)
-console.log("\n shoppingList after an update")
-console.table(shoppingList)
-
-updateItem(12, "doritos", 8, true)
-console.log("\n shoppingList after another update")
-console.table(shoppingList)
-
-
-
+}
