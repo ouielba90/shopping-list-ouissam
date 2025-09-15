@@ -7,10 +7,10 @@ function Entry(item, quantity, purchased) {
 
 // Function to add an entry to the shoppingList
 function addItem(list, item, quantity, prompt = true){
-  let currentItem_validation = shoppingList.find(el => el["item"] === item);
+  let currentItem_validation = list.find(el => el["item"] === item);
   if (currentItem_validation === undefined){
-    if (quantity < 0 | !Number.isInteger(quantity)) {
-      quantity = 0
+    if (quantity < 0 || !Number.isInteger(quantity)) {
+      quantity = 0;
       console.warn("\nNegative number or unaccepted input for quantity detected.");
       console.warn("Item is still created setting quantity = 0");
     }
@@ -24,7 +24,7 @@ function addItem(list, item, quantity, prompt = true){
 
 // Function to remove an entry from the shoppingList
 function removeItem(list, index){
-  if (Math.abs(index) <= shoppingList.length && Number.isInteger(index)){
+  if (index >= 0 && index < list.length && Number.isInteger(index)){
     list.splice(index, 1);
     console.log("\nItem removed");
   } else {
@@ -35,19 +35,12 @@ function removeItem(list, index){
 
 // Function to update an item in the shoppingList
 function updateItem(list, index, newItem, newQuantity){
-  let quick_validation = false;
-
-  if (Number.isInteger(newQuantity)) {
-    quick_validation = true;
-  }
-
-  let currentItemIndex = shoppingList.findIndex(el => el["item"] === newItem);
-  if (currentItemIndex === index && quick_validation) {
-    shoppingList[currentItemIndex]["quantity"] = newQuantity;
+  if (list[index]["item"] === newItem && Number.isInteger(newQuantity)) {
+    list[index]["quantity"] = newQuantity;
     console.log("\nEntry updated");
     
-  } else if (currentItemIndex !== index && quick_validation) {
-      console.log("\nThe item property cannot be updated. Item not found in the ", index, " index.");
+  } else if (list[index]["item"] !== newItem && Number.isInteger(newQuantity)) {
+      console.log("\nThe item property cannot be updated. Item not found in index", index);
 
   } else {
       console.warn("\nThere was an error in one or more parameters");
@@ -83,7 +76,6 @@ console.log("### Initial Shopping List (for testing purposes) ###")
 console.log("####################################################")
 console.table(shoppingList)
 
-let options = ["1", "2", "3", "q"];
 let choose_option = "";
 let input_add = ""
 
