@@ -6,6 +6,9 @@ function Entry(item, quantity, purchased) {
 }
 
 // Function to add an entry to the shoppingList
+// The 'prompt' argument is set to true by default.
+// It should be set to false only when creating the initial list
+// so that no messages about item addition are displayed.
 function addItem(list, item, quantity, prompt = true){
   let currentItem_validation = list.find(el => el["item"] === item);
   if (currentItem_validation === undefined){
@@ -60,6 +63,8 @@ try {
 let shoppingList = [];
 
 // Examples of items added to the shopping list
+// The third argument is set to false because we're not in prompt mode at this point
+// so there is no need to show messages about added items.
 shoppingList = addItem(shoppingList, "bolsa de patatas lays", 2, false);
 shoppingList = addItem(shoppingList, "bolsa de cacauetes", 1, false);
 shoppingList = addItem(shoppingList, "galletas", 3, false);
