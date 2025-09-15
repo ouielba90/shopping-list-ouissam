@@ -1,11 +1,11 @@
-// Use of a constructor instead of a simple object {} so we can easily create multiple reusable entries.
+// Use of a constructor instead of a plain object {} so we can easily create multiple reusable entries.
 function Entry(item, quantity, purchased) {
     this.item = item;
     this.quantity = quantity;
     this.purchased = purchased;
 }
 
-// Function that adds an entry to the shoppingList
+// Function to add an entry to the shoppingList
 function addItem(list, item, quantity, prompt = true){
   let currentItem_validation = shoppingList.find(el => el["item"] === item);
   if (currentItem_validation === undefined){
@@ -22,7 +22,7 @@ function addItem(list, item, quantity, prompt = true){
   return list;
 }
 
-// Function that removes an element from the shoppingList
+// Function to remove an entry from the shoppingList
 function removeItem(list, index){
   if (Math.abs(index) <= shoppingList.length && Number.isInteger(index)){
     list.splice(index, 1);
@@ -33,7 +33,7 @@ function removeItem(list, index){
   return list
 }
 
-// Function that updates the shoppingList according to the arguments passed 
+// Function to update an item in the shoppingList
 function updateItem(list, index, newItem, newQuantity){
   let quick_validation = false;
 
@@ -55,8 +55,7 @@ function updateItem(list, index, newItem, newQuantity){
   return list;
 }
 
-// First it checks whether the prompt-sync module is installed in order to 
-// use the prompt menu                                                     
+// First check whether the prompt-sync module is installed
 try {                                                                      
     prompt = require('prompt-sync')();                                     
 } catch (err) {                                                            
@@ -65,18 +64,9 @@ try {
     process.exit();                                                        
 }                                                                          
 
-// Prompt                                                        
-try { // Just checks whether the prompt-sync module is installed 
-    prompt = require('prompt-sync')();                           
-} catch (err) {                                                  
-    console.log('Module not installed');                         
-    console.log('Run: npm install prompt-sync');                 
-    process.exit();                                              
-}                                                                
-
 let shoppingList = [];
 
-// A few examples of how the items are added in the shopping list
+// Examples of items added to the shopping list
 shoppingList = addItem(shoppingList, "bolsa de patatas lays", 2, false);
 shoppingList = addItem(shoppingList, "bolsa de cacauetes", 1, false);
 shoppingList = addItem(shoppingList, "galletas", 3, false);
@@ -99,6 +89,7 @@ let input_add = ""
 
 console.log("Customize Your Shopping List");
 
+// Prompt                                                        
 while (choose_option !== "q") {
   console.log("Options available: [1] Add element, [2] Remove Element, [3] Update item, [q] Quit");
   choose_option = prompt("Choose the task? ");
