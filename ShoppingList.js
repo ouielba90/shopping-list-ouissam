@@ -52,13 +52,13 @@ function updateItem(list, index, newItem, newQuantity){
 }
 
 // First check whether the prompt-sync module is installed
-try {                                                                      
-    prompt = require('prompt-sync')();                                     
-} catch (err) {                                                            
-    console.log('Module not installed');                                   
-    console.log('Run: npm install prompt-sync');                           
-    process.exit();                                                        
-}                                                                          
+try {
+    prompt = require('prompt-sync')();
+} catch (err) {
+    console.log('The "prompt-sync" module is required but not installed.');
+    console.log('Please run: npm install prompt-sync');
+    process.exit();
+}
 
 let shoppingList = [];
 
