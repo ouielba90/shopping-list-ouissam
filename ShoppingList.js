@@ -1,10 +1,3 @@
-// In this code, the global list is modified directly for efficiency,
-// Not using a returned copy to avoid extra memory.
-// Input validations are already implemented.
-
-// Global list variable declared
-let shoppingList = [];
-
 // Use of a constructor instead of a simple object {} so we can easily create multiple reusable entries.
 function Entry(item, quantity, purchased) {
     this.item = item;
@@ -13,7 +6,7 @@ function Entry(item, quantity, purchased) {
 }
 
 // Function that adds an entry to the shoppingList
-function addItem(list, item, quantity){
+function addItem(list, item, quantity, prompt = true){
   let currentItem_validation = shoppingList.find(el => el["item"] === item);
   if (currentItem_validation === undefined){
     if (quantity < 0 | !Number.isInteger(quantity)) {
@@ -22,7 +15,7 @@ function addItem(list, item, quantity){
       console.warn("Item is still created setting quantity = 0");
     }
     list.push(new Entry(item, quantity, false));
-    console.log("\nItem created");
+    if (prompt) {console.log("\nItem created");} // Check whether we are in prompt mode just for visual purposes
   } else {
     console.warn("\nDuplication found! The item won't be created.");
   }
@@ -62,28 +55,43 @@ function updateItem(list, index, newItem, newQuantity){
   return list;
 }
 
+// First it checks whether the prompt-sync module is installed in order to 
+// use the prompt menu                                                     
+try {                                                                      
+    prompt = require('prompt-sync')();                                     
+} catch (err) {                                                            
+    console.log('Module not installed');                                   
+    console.log('Run: npm install prompt-sync');                           
+    process.exit();                                                        
+}                                                                          
+
+// Prompt                                                        
+try { // Just checks whether the prompt-sync module is installed 
+    prompt = require('prompt-sync')();                           
+} catch (err) {                                                  
+    console.log('Module not installed');                         
+    console.log('Run: npm install prompt-sync');                 
+    process.exit();                                              
+}                                                                
+
+let shoppingList = [];
+
 // A few examples of how the items are added in the shopping list
-shoppingList = addItem(shoppingList, "bolsa de patatas lays", 2);
-shoppingList = addItem(shoppingList, "bolsa de cacauetes", 1);
-shoppingList = addItem(shoppingList, "galletas", 3);
-shoppingList = addItem(shoppingList, "zumo de naranja", 2);
-shoppingList = addItem(shoppingList, "pan", 1);
-shoppingList = addItem(shoppingList, "leche", 2);
-shoppingList = addItem(shoppingList, "huevos", 12);
-shoppingList = addItem(shoppingList, "manzanas", 4);
-shoppingList = addItem(shoppingList, "plátanos", 6);
-shoppingList = addItem(shoppingList, "yogur", 5);
+shoppingList = addItem(shoppingList, "bolsa de patatas lays", 2, false);
+shoppingList = addItem(shoppingList, "bolsa de cacauetes", 1, false);
+shoppingList = addItem(shoppingList, "galletas", 3, false);
+shoppingList = addItem(shoppingList, "zumo de naranja", 2, false);
+shoppingList = addItem(shoppingList, "pan", 1, false);
+shoppingList = addItem(shoppingList, "leche", 2, false);
+shoppingList = addItem(shoppingList, "huevos", 12, false);
+shoppingList = addItem(shoppingList, "manzanas", 4, false);
+shoppingList = addItem(shoppingList, "plátanos", 6, false);
+shoppingList = addItem(shoppingList, "yogur", 5, false);
 
+console.log("####################################################")
+console.log("### Initial Shopping List (for testing purposes) ###")
+console.log("####################################################")
 console.table(shoppingList)
-
-// Prompt
-try { // Just checks whether the prompt-sync module is installed
-    prompt = require('prompt-sync')();
-} catch (err) {
-    console.log('Module not installed');
-    console.log('Run: npm install prompt-sync');
-    process.exit();
-}
 
 let options = ["1", "2", "3", "q"];
 let choose_option = "";
