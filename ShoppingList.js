@@ -20,7 +20,7 @@ function addItem(list, item, quantity, prompt = true){
     list.push(new Entry(item, quantity, false));
     if (prompt) {console.log("\nItem created");} // Check whether we are in prompt mode just for visual purposes
   } else {
-    console.warn("\nDuplication found! The item won't be created.");
+    console.warn("\nDuplication found! The item will neither be created nor updated.");
   }
   return list;
 }
@@ -31,7 +31,7 @@ function removeItem(list, index){
     list.splice(index, 1);
     console.log("\nItem removed");
   } else {
-    console.warn("\nThe index passed is out of the range of the list.");
+    console.warn("\nThe index provided is out of range or not valid for the list.");
   }
   return list
 }
@@ -43,7 +43,15 @@ function updateItem(list, index, newItem, newQuantity){
     console.log("\nEntry updated");
     
   } else if (list[index]["item"] !== newItem && Number.isInteger(newQuantity)) {
-      console.log("\nThe item property cannot be updated. Item not found in index", index);
+      console.log("\nThe item property", newItem, "cannot be updated: the item was not found at index", index);
+      let currentItem_validation = list.find(el => el["item"] === newItem);
+      if (currentItem_validation === undefined) {
+        console.log("Since the item doesn't exist, it will be added at index", index);
+        list.splice(index, 0, new Entry(newItem, newQuantity, false));
+      } else {
+        console.log("The item does exist so the quantity will be updated.");
+        list[list.findIndex(el => el["item"] === newItem)]["quantity"] = newQuantity;
+      }
 
   } else {
       console.warn("\nThere was an error in one or more parameters");
@@ -90,23 +98,25 @@ console.log("Customize Your Shopping List");
 while (choose_option !== "q") {
   console.log("Options available: [1] Add element, [2] Remove Element, [3] Update item, [q] Quit");
   choose_option = prompt("Choose the task? ");
-  switch (choose_option) {
+  switch (choose_option.trim()) {
     case "1":
       console.log("Add");
       input_add = prompt("Enter an item and quantity as 'item,quantity' (string,integer): ");
       if (input_add.split(",").length === 2) { // It validates if the input introduced has two elements
-        shoppingList = addItem(shoppingList, input_add.split(",")[0], Number(input_add.split(",")[1]));
+        shoppingList = addItem(shoppingList, input_add.split(",")[0].trim(), Number(input_add.split(",")[1].trim()));
+        prompt("\nPress Enter to display the resulting table...")
         console.table(shoppingList);
         console.log("");
       } else {
-        console.log("Wrong input...");
+        console.log("\nWrong input...\n");
       }
       break;
 
     case "2":
       console.log("Remove");
       input_add = prompt("Enter the index number of the item you want to delete (integer): ");
-      shoppingList = removeItem(shoppingList, Number(input_add));
+      shoppingList = removeItem(shoppingList, Number(input_add.trim()));
+      prompt("\nPress Enter to display the resulting table...")
       console.table(shoppingList);
       console.log("");
       break;
@@ -116,11 +126,12 @@ while (choose_option !== "q") {
       console.log("Enter the index number, item and quantity as");
       input_add = prompt("'index,item,quantity'(integer,string,integer): ");
       if (input_add.split(",").length === 3) { // It validates if the input introduced has three elements
-        shoppingList = updateItem(shoppingList, Number(input_add.split(",")[0]), input_add.split(",")[1], Number(input_add.split(",")[2]));
+        shoppingList = updateItem(shoppingList, Number(input_add.split(",")[0].trim()), input_add.split(",")[1].trim(), Number(input_add.split(",")[2].trim()));
+        prompt("\nPress Enter to display the resulting table...")
         console.table(shoppingList);
         console.log("");
       } else {
-        console.log("Wrong input...");
+        console.log("\nWrong input...\n");
       }
       break;
 
