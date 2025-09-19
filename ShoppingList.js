@@ -204,7 +204,7 @@ shoppingList = addItem(shoppingList, "pan", 1, false);
 shoppingList = addItem(shoppingList, "leche", 2, false);
 shoppingList = addItem(shoppingList, "huevos", 12, false);
 shoppingList = addItem(shoppingList, "manzanas", 4, false);
-shoppingList = addItem(shoppingList, "plátanos", 6, false);
+shoppingList = addItem(shoppingList, "platanos", 6, false);
 shoppingList = addItem(shoppingList, "yogur", 5, false);
 
 console.log("####################################################");
