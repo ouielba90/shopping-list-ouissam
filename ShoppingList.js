@@ -45,14 +45,27 @@ function updateItem(list, index, newItem, newQuantity) {
   // Check if item already exists
   const existingIndex = list.findIndex((el) => el.item === newItem);
 
-  if (existingIndex !== -1) {
+  if (existingIndex === -1) {
     // If item exists then update quantity instead
+    if (index > list.length - 1) {
+      console.log(
+        `\nIndex ${index} out of range. Item "${newItem}" added at the end.`,
+      );
+      list.push(new Entry(newItem, newQuantity));
+    } else {
+      console.log(
+        `\nItem "${newItem}" does not exist but it will be added at index ${index}.`,
+      );
+      list.splice(index, 0, new Entry(newItem, newQuantity));
+    }
+  } else {
+    // Item exists → update quantity
     list[existingIndex]["quantity"] = newQuantity;
     console.log(
-      `\nItem "${newItem}" does not exist at index ${index} but exists at index ${existingIndex}, so it will be updated there.`,
+      `\nItem "${newItem}" exists at index ${existingIndex}, quantity updated.`,
     );
-    return list;
   }
+  return list;
 
   // If item does not exist, then  decide where to add
   if (index > list.length - 1) {
@@ -70,7 +83,7 @@ function updateItem(list, index, newItem, newQuantity) {
 
 // Validate item name
 function validateItem(item) {
-  const validPatternForItem = /^[a-zA-Z0-9\s\-]+$/;
+  const validPatternForItem = /^[a-zA-Z\s\-]+$/;
 
   if (item === "") {
     return [false, "Item cannot be empty."];
@@ -94,10 +107,10 @@ function validateItem(item) {
 function validateQuantity(quantity) {
   const num = Number(quantity);
   if (Number.isNaN(num) || num <= 0 || !Number.isInteger(num)) {
-    return [false, `Quantity "${num}" is not a valid positive integer.`];
+    return [false, `Quantity "${quantity}" is not a valid positive integer.`];
   }
   if (num > 50) {
-    return [false, `Quantity "${num}" exceeds the allowed maximum of 50.`];
+    return [false, `Quantity "${quantity}" exceeds the allowed maximum of 50.`];
   }
   return [true, ""];
 }
@@ -224,10 +237,10 @@ while (choose_option !== "q") {
           input_list[0],
           Number(input_list[1]),
         );
-        showTable(shoppingList);
       } else {
-        console.log(`\n${validation_result[1]}\n`);
+        console.log(`\n${validation_result[1]}`);
       }
+      showTable(shoppingList);
       break;
     }
     case "2": {
@@ -239,10 +252,10 @@ while (choose_option !== "q") {
       let validation_result = input_validation("remove", input_add.trim());
       if (validation_result[0]) {
         shoppingList = removeItem(shoppingList, Number(input_add.trim()));
-        showTable(shoppingList);
       } else {
-        console.warn(`\n${validation_result[1]}\n`);
+        console.warn(`\n${validation_result[1]}`);
       }
+      showTable(shoppingList);
       break;
     }
     case "3": {
@@ -261,10 +274,10 @@ while (choose_option !== "q") {
           input_list[1],
           Number(input_list[2]),
         );
-        showTable(shoppingList);
       } else {
-        console.warn(`\n${validation_result[1]}\n`);
+        console.warn(`\n${validation_result[1]}`);
       }
+      showTable(shoppingList);
       break;
     }
     case "q": {
