@@ -1,4 +1,4 @@
-// Use of a constructor instead of a plain object {} so we can easily create multiple reusable entries.
+// Use of a constructor instead of a plain object {} so we can reuse entries.
 class Entry {
   constructor(item, quantity, purchased = false) {
     this.item = item;
@@ -7,10 +7,8 @@ class Entry {
   }
 }
 
-/* Function to add an entry to the shoppingList
-The 'prompt' argument is set to true by default.
-It should be set to false only when creating the initial list
-so that no messages about item addition are displayed.*/
+/* Add an entry to the shoppingList
+'prompt' false only for initial list to avoid messages */
 function addItem(list, item, quantity, prompt = true) {
   let currentItem_validation = list.find((el) => el["item"] === item);
   if (currentItem_validation === undefined) {
@@ -31,7 +29,7 @@ function addItem(list, item, quantity, prompt = true) {
   return list;
 }
 
-// Function to remove an entry from the shoppingList
+// Remove an entry from the shoppingList
 function removeItem(list, index) {
   if (index >= 0 && index < list.length) {
     list.splice(index, 1);
@@ -42,13 +40,13 @@ function removeItem(list, index) {
   return list;
 }
 
-// Function to update an item in the shoppingList
+// Update an item in the shoppingList
 function updateItem(list, index, newItem, newQuantity) {
   // Check if item already exists
   const existingIndex = list.findIndex((el) => el.item === newItem);
 
   if (existingIndex !== -1) {
-    // If item exists then update quantity
+    // If item exists then update quantity instead
     list[existingIndex]["quantity"] = newQuantity;
     console.log(
       `\nItem "${newItem}" does not exist at index ${index} but exists at index ${existingIndex}, so it will be updated there.`,
@@ -70,6 +68,7 @@ function updateItem(list, index, newItem, newQuantity) {
   return list;
 }
 
+// Validate item name
 function validateItem(item) {
   const validPatternForItem = /^[a-zA-Z0-9\s\-]+$/;
 
@@ -91,6 +90,7 @@ function validateItem(item) {
   return [true, ""];
 }
 
+// Validate quantity (must be an integer > 0 and <= 50)
 function validateQuantity(quantity) {
   const num = Number(quantity);
   if (Number.isNaN(num) || num <= 0 || !Number.isInteger(num)) {
@@ -102,6 +102,7 @@ function validateQuantity(quantity) {
   return [true, ""];
 }
 
+// Validate index (must be an integer >= 0)
 function validateIndex(index) {
   const num = Number(index);
   if (!Number.isInteger(num) || num < 0) {
@@ -113,9 +114,11 @@ function validateIndex(index) {
   return [true, ""];
 }
 
+// Validate the input according to the different actions (add, remove and update)
 function input_validation(action, options) {
   switch (action) {
     case "add": {
+      // Validates item name and quantity
       if (options.length !== 2) {
         return [false, "Wrong input. It must contain two arguments."];
       }
@@ -125,9 +128,11 @@ function input_validation(action, options) {
       return validateQuantity(quantity);
     }
     case "remove": {
+      // Validate index
       return validateIndex(options);
     }
     case "update": {
+      // Validate index, item name and quantity
       if (options.length === 3) {
         let [index, item, quantity] = options;
 
@@ -151,17 +156,19 @@ function input_validation(action, options) {
       }
     }
     default: {
-      // Unnecessary but we keep it for defensive coding
+      // Just in case something unexpected happens
       return [false, "Unknown action."];
     }
   }
 }
 
+// Display list as a table
 function showTable(list) {
   prompt("\nPress Enter to display the resulting table...");
   console.table(list);
   console.log("");
 }
+
 // First check whether the prompt-sync module is installed
 try {
   prompt = require("prompt-sync")();
@@ -174,7 +181,7 @@ try {
 let shoppingList = [];
 
 /* Examples of items added to the shopping list
-The third argument is set to false because we're not in prompt mode at this point
+The third argument (promp) is set to false because here we're not in prompt mode
 so there is no need to show messages about added items.*/
 shoppingList = addItem(shoppingList, "bolsa de patatas lays", 2, false);
 shoppingList = addItem(shoppingList, "bolsa de cacauetes", 1, false);
@@ -196,7 +203,7 @@ let choose_option;
 
 console.log(`Customize Your Shopping List`);
 
-// Prompt
+// Main menu loop
 while (choose_option !== "q") {
   console.log(
     `Options available: [1] Add element, [2] Remove Element, [3] Update item, [q] Quit`,
@@ -204,13 +211,13 @@ while (choose_option !== "q") {
   choose_option = prompt("Choose the task? ");
   switch (choose_option.trim()) {
     case "1": {
+      // Add item
       console.log(`\nAdd option selected\n`);
       let input_add = prompt(
         "Enter an item and quantity as 'item,quantity' (string,integer): ",
       );
       let input_list = input_add.split(",").map((el) => el.trim());
       let validation_result = input_validation("add", input_list);
-      // It validates if the input introduced has two elements, if these are not empty, if the first in a number and if the second one is not.
       if (validation_result[0]) {
         shoppingList = addItem(
           shoppingList,
@@ -224,6 +231,7 @@ while (choose_option !== "q") {
       break;
     }
     case "2": {
+      // Remove item
       console.log(`\nRemove option selected\n`);
       let input_add = prompt(
         "Enter the index number of the item you want to delete (integer): ",
@@ -238,13 +246,12 @@ while (choose_option !== "q") {
       break;
     }
     case "3": {
+      // Update item
       console.log(`\nUpdate option selected\n`);
       console.log(`Enter the index number, item and quantity as`);
       let input_add = prompt(
         "'index,item,quantity' (integer,string,integer): ",
       );
-      /*Splits the input string by commas and trims whitespace from each element,
-        producing a clean array of input values.*/
       let input_list = input_add.split(",").map((el) => el.trim());
       let validation_result = input_validation("update", input_list);
       if (validation_result[0]) {
