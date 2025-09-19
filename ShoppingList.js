@@ -1,8 +1,10 @@
 // Use of a constructor instead of a plain object {} so we can easily create multiple reusable entries.
-function Entry(item, quantity, purchased) {
-  this.item = item;
-  this.quantity = quantity;
-  this.purchased = purchased;
+class Entry {
+  constructor(item, quantity, purchased = false) {
+    this.item = item;
+    this.quantity = quantity;
+    this.purchased = purchased;
+  }
 }
 
 /* Function to add an entry to the shoppingList
@@ -11,43 +13,33 @@ It should be set to false only when creating the initial list
 so that no messages about item addition are displayed.*/
 function addItem(list, item, quantity, prompt = true) {
   let currentItem_validation = list.find((el) => el["item"] === item);
-  let charnumb_item = item.length > 1 && item.length <= 50;
-  if (currentItem_validation === undefined && item !== "") {
+  if (currentItem_validation === undefined) {
     if (quantity < 0) {
       console.warn(
         `\nNegative number detected. Item ${item} will not be created.`,
       );
-      return list;
     }
-    if (!charnumb_item) {
-      console.warn(
-        `\nInvalid item name length \(${item.length} chars\). Allowed range: 2-50 chars.\n`,
-      );
-      return list;
-    }
-    list.push(new Entry(item, quantity, false));
-    // Check whether we are in prompt mode just for visual purposes
+    list.push(new Entry(item, quantity));
     if (prompt) {
       console.log(`\nItem created`);
     }
-    return list;
   } else {
     console.warn(
       `\nDuplication found! The item will neither be created nor updated.`,
     );
-    return list;
   }
+  return list;
 }
 
 // Function to remove an entry from the shoppingList
 function removeItem(list, index) {
-  if (index < list.length - 1) {
+  if (index >= 0 && index < list.length) {
     list.splice(index, 1);
     console.log(`\nItem removed`);
-    return list;
   } else {
-    console.log(`Cannot remove item: the index ${index} is out of range.`);
+    console.log(`\nCannot remove item: the index ${index} is out of range.`);
   }
+  return list;
 }
 
 // Function to update an item in the shoppingList
@@ -58,7 +50,9 @@ function updateItem(list, index, newItem, newQuantity) {
   if (existingIndex !== -1) {
     // If item exists then update quantity
     list[existingIndex]["quantity"] = newQuantity;
-    console.log(`\nUpdated "${newItem}" at index ${existingIndex}.`);
+    console.log(
+      `\nItem "${newItem}" does not exist at index ${index} but exists at index ${existingIndex}, so it will be updated there.`,
+    );
     return list;
   }
 
@@ -67,105 +61,107 @@ function updateItem(list, index, newItem, newQuantity) {
     console.log(
       `\nIndex ${index} out of range. Item "${newItem}" will be added at the end.`,
     );
-    list.push(new Entry(newItem, newQuantity, false));
+    list.push(new Entry(newItem, newQuantity));
   } else {
     console.log(`\nItem "${newItem}" will be added at index ${index}.`);
-    list.splice(index, 0, new Entry(newItem, newQuantity, false));
+    list.splice(index, 0, new Entry(newItem, newQuantity));
   }
 
   return list;
 }
 
-function input_validation(action, options) {
-  let msg = "";
+function validateItem(item) {
   const validPatternForItem = /^[a-zA-Z0-9\s\-]+$/;
 
+  if (item === "") {
+    return [false, "Item cannot be empty."];
+  }
+  if (item.length < 2 || item.length > 50) {
+    return [
+      false,
+      `Invalid item name length (${item.length} chars). Allowed range: 2-50 chars.`,
+    ];
+  }
+  if (Number.isInteger(Number(item))) {
+    return [false, "Item cannot be a number."];
+  }
+  if (!validPatternForItem.test(item)) {
+    return [false, `Item "${item}" contains invalid characters.`];
+  }
+  return [true, ""];
+}
+
+function validateQuantity(quantity) {
+  const num = Number(quantity);
+  if (Number.isNaN(num) || num <= 0 || !Number.isInteger(num)) {
+    return [false, `Quantity "${num}" is not a valid positive integer.`];
+  }
+  if (num > 50) {
+    return [false, `Quantity "${num}" exceeds the allowed maximum of 50.`];
+  }
+  return [true, ""];
+}
+
+function validateIndex(index) {
+  const num = Number(index);
+  if (!Number.isInteger(num) || num < 0) {
+    return [
+      false,
+      `Index "${index}" is not valid (must be a non-negative integer).`,
+    ];
+  }
+  return [true, ""];
+}
+
+function input_validation(action, options) {
   switch (action) {
-    case "add":
-      if (options.length === 2) {
-        let item = options[0];
-        let quantity = options[1];
-        if (item === "") {
-          msg = `Item cannot be empty.`;
-          return [false, msg];
-        }
-        console.log(Number.isInteger(Number(item)));
-        if (Number.isInteger(Number(item))) {
-          msg = `Item cannot be a number.`;
-          return [false, msg];
-        }
-        if (!validPatternForItem.test(item)) {
-          msg = `Item "${item}" contains invalid characters.`;
-          return [false, msg];
-        }
-        if (
-          Number.isNaN(Number(quantity)) ||
-          Number(quantity) <= 0 ||
-          !Number.isInteger(Number(quantity))
-        ) {
-          msg = `Quantity "${quantity}" is not a valid positive integer.`;
-          return [false, msg];
-        }
-        return [true, ""];
-      } else {
-        msg = "Wrong input. It must contain two arguments.";
-        return [false, msg];
+    case "add": {
+      if (options.length !== 2) {
+        return [false, "Wrong input. It must contain two arguments."];
       }
-
-    case "remove":
-      if (Number.isInteger(Number(options))) {
-        let index = options;
-        if (!Number.isInteger(Number(index)) || Number(index) < 0) {
-          msg = `Index ${index} is not valid (must be a non-negative integer).`;
-          return [false, msg];
-        }
-        return [true, ""];
-      } else {
-        msg = `Wrong input. It must contain an integer as an argument.`;
-        return [false, msg];
-      }
-
-    case "update":
+      let [item, quantity] = options;
+      let result = validateItem(item);
+      if (!result[0]) return result;
+      return validateQuantity(quantity);
+    }
+    case "remove": {
+      return validateIndex(options);
+    }
+    case "update": {
       if (options.length === 3) {
-        let index = options[0];
-        let item = options[1];
-        let quantity = options[2];
+        let [index, item, quantity] = options;
 
-        if (!Number.isInteger(Number(index)) || Number(index) < 0) {
-          msg = `Index ${index} is not valid (must be a non-negative integer).`;
-          return [false, msg];
+        let result_index = validateIndex(index);
+
+        if (!result_index[0]) {
+          return result_index;
         }
-
-        if (item === "") {
-          msg = `Item cannot be empty.`;
-          return [false, msg];
+        let result_item = validateItem(item);
+        if (!result_item[0]) {
+          return result_item;
         }
-
-        if (!validPatternForItem.test(item)) {
-          msg = `Item "${item}" contains invalid characters.`;
-          return [false, msg];
-        }
-
-        if (
-          Number.isNaN(Number(quantity)) ||
-          Number(quantity) <= 0 ||
-          !Number.isInteger(Number(quantity))
-        ) {
-          msg = `Quantity "${quantity}" is not a valid positive integer.`;
-          return [false, msg];
+        let result_quantity = validateQuantity(quantity);
+        if (!result_quantity[0]) {
+          return result_quantity;
         }
 
         return [true, ""];
       } else {
-        msg = "Wrong input. It must contain three arguments.";
-        return [false, msg];
+        return [false, "Wrong input. It must contain three arguments."];
       }
-
-    default:
-      break;
+    }
+    default: {
+      // Unnecessary but we keep it for defensive coding
+      return [false, "Unknown action."];
+    }
   }
 }
 
+function showTable(list) {
+  prompt("\nPress Enter to display the resulting table...");
+  console.table(list);
+  console.log("");
+}
 // First check whether the prompt-sync module is installed
 try {
   prompt = require("prompt-sync")();
@@ -197,9 +193,6 @@ console.log("####################################################");
 console.table(shoppingList);
 
 let choose_option;
-let input_add;
-let input_list = [];
-let validation_result;
 
 console.log(`Customize Your Shopping List`);
 
@@ -210,13 +203,13 @@ while (choose_option !== "q") {
   );
   choose_option = prompt("Choose the task? ");
   switch (choose_option.trim()) {
-    case "1":
+    case "1": {
       console.log(`\nAdd option selected\n`);
-      input_add = prompt(
+      let input_add = prompt(
         "Enter an item and quantity as 'item,quantity' (string,integer): ",
       );
-      input_list = input_add.split(",").map((el) => el.trim());
-      validation_result = input_validation("add", input_list);
+      let input_list = input_add.split(",").map((el) => el.trim());
+      let validation_result = input_validation("add", input_list);
       // It validates if the input introduced has two elements, if these are not empty, if the first in a number and if the second one is not.
       if (validation_result[0]) {
         shoppingList = addItem(
@@ -224,39 +217,36 @@ while (choose_option !== "q") {
           input_list[0],
           Number(input_list[1]),
         );
-        prompt("\nPress Enter to display the resulting table...");
-        console.table(shoppingList);
-        console.log("");
+        showTable(shoppingList);
       } else {
         console.log(`\n${validation_result[1]}\n`);
       }
       break;
-
-    case "2":
+    }
+    case "2": {
       console.log(`\nRemove option selected\n`);
-      input_add = prompt(
+      let input_add = prompt(
         "Enter the index number of the item you want to delete (integer): ",
       );
-      validation_result = input_validation("remove", input_add.trim());
+      let validation_result = input_validation("remove", input_add.trim());
       if (validation_result[0]) {
         shoppingList = removeItem(shoppingList, Number(input_add.trim()));
-        prompt("\nPress Enter to display the resulting table...");
-        console.table(shoppingList);
-        console.log("");
+        showTable(shoppingList);
       } else {
         console.warn(`\n${validation_result[1]}\n`);
       }
       break;
-
-    case "3":
+    }
+    case "3": {
       console.log(`\nUpdate option selected\n`);
       console.log(`Enter the index number, item and quantity as`);
-      input_add = prompt("'index,item,quantity' (integer,string,integer): ");
+      let input_add = prompt(
+        "'index,item,quantity' (integer,string,integer): ",
+      );
       /*Splits the input string by commas and trims whitespace from each element,
         producing a clean array of input values.*/
-      input_list = input_add.split(",").map((el) => el.trim());
-      validation_result = input_validation("update", input_list);
-      // It validates if the input introduced has three elements, if the second one is a number and if the first and second one are not a number.
+      let input_list = input_add.split(",").map((el) => el.trim());
+      let validation_result = input_validation("update", input_list);
       if (validation_result[0]) {
         shoppingList = updateItem(
           shoppingList,
@@ -264,20 +254,19 @@ while (choose_option !== "q") {
           input_list[1],
           Number(input_list[2]),
         );
-        prompt("\nPress Enter to display the resulting table...");
-        console.table(shoppingList);
-        console.log("");
+        showTable(shoppingList);
       } else {
         console.warn(`\n${validation_result[1]}\n`);
       }
       break;
-
-    case "q":
+    }
+    case "q": {
       console.log(`Goodbye! See you next time!`);
       break;
-
-    default:
+    }
+    default: {
       console.log(`Unrecognized option. Try again!\n`);
       break;
+    }
   }
 }
