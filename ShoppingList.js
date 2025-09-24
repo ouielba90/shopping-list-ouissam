@@ -46,7 +46,7 @@ function updateItem(list, index, newItem, newQuantity) {
   const existingIndex = list.findIndex((el) => el.item === newItem);
 
   if (existingIndex === -1) {
-    // If item exists then update quantity instead
+    // If item does not exist, decide where to add it
     if (index > list.length - 1) {
       console.log(
         `\nIndex ${index} out of range. Item "${newItem}" added at the end.`,
@@ -59,7 +59,7 @@ function updateItem(list, index, newItem, newQuantity) {
       list.splice(index, 0, new Entry(newItem, newQuantity));
     }
   } else {
-    // Item exists → update quantity
+    // If item exists, update quantity
     list[existingIndex]["quantity"] = newQuantity;
     console.log(
       `\nItem "${newItem}" exists at index ${existingIndex}, quantity updated.`,
